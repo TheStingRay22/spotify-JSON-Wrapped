@@ -12,7 +12,7 @@ def calculate_top_tracks(data: List[Dict], top_n: int = 5) -> List[Tuple[str, in
     """Returns the top N tracks by playtime."""
     track_playtime = Counter()
     for entry in data:
-        track_name = f"{entry['artistName']} - {entry['trackName']}"
+        track_name = f"{entry['trackName']} - {entry['artistName']}"
         track_playtime[track_name] += entry['msPlayed']
     return track_playtime.most_common(top_n)
 

@@ -25,12 +25,18 @@ def main():
 
     # Display results
     print("\n=== Top Artists ===")
+    ArtistCounter = 1
     for artist, playtime in calculate_top_artists(data, top_n=args.top_n):
-        print(f"{artist}: {playtime / 60000:.2f} minutes")
+        
+        print(f"{ArtistCounter} {artist}: {playtime / 60000:.2f} minutes")
+        ArtistCounter = ArtistCounter + 1
 
     print("\n=== Top Tracks ===")
+    TrackCounter = 1
     for track, playtime in calculate_top_tracks(data, top_n=args.top_n):
-        print(f"{track}: {playtime / 60000:.2f} minutes")
+
+        print(f"{TrackCounter} {track}: {playtime / 60000:.2f} minutes")
+        TrackCounter = TrackCounter + 1
 
     print(f"\n=== Total Minutes Played ===")
     print(f"{calculate_total_minutes(data):.2f} minutes")
