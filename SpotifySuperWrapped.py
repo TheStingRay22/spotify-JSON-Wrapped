@@ -1,6 +1,5 @@
 import os
-from tkinter import filedialog, Tk
-from streaming_stats.parser import load_streaming_data
+from streaming_stats.parser import load_streaming_data, filter_out_episodes
 from streaming_stats.analytics import (
     calculate_grand_total_minutes,
     calculate_time_span,
@@ -8,28 +7,28 @@ from streaming_stats.analytics import (
     calculate_top_artists,
     calculate_top_tracks
 )
-
-def open_files():
-    """Open a file dialog to select multiple JSON files."""
-    root = Tk()
-    root.withdraw()  # Hide the main Tkinter window
-    file_paths = filedialog.askopenfilenames(
-        title="Select Your Spotify Streaming History Files",
-        filetypes=[("JSON files", "*.json")]
-    )
-    return list(file_paths)
+DEFAULT_DIRECTORY = "/Users/dgra228/Documents/Dev/Python_Files/Spotify Extended Streaming History"
+def find_json_files(directory: str) -> list:
+    """Find all JSON files in the given directory."""
+    return [
+        os.path.join(directory, file)
+        for file in os.listdir(directory)
+        if file.endswith(".json")
+    ]
 
 def main():
     print("Welcome to Spotify Super Wrapped!")
     
     # Open file dialog to select files
-    file_paths = open_files()
+    file_paths = find_json_files(DEFAULT_DIRECTORY)
     if not file_paths:
         print("No files selected. Exiting.")
         return
 
     # Load and parse data
-    data = load_streaming_data(file_paths)
+    pre_data = load_streaming_data(file_paths)
+    print(f"Loaded {len(pre_data)} records from {len(file_paths)} files.")
+    data = filter_out_episodes(pre_data)
     print(f"Loaded {len(data)} records from {len(file_paths)} files.")
 
     # Calculate analytics
@@ -53,3 +52,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+   
