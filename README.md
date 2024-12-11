@@ -1,4 +1,7 @@
 # Spotify JSON Wrapped
+## SPOTIFY HAS BEEN LYING TO US
+![Pepe Silvia](https://i.kym-cdn.com/photos/images/newsfeed/002/546/187/fb1.jpg)
+
 
 **Spotify JSON Wrapped** is a Python tool for analyzing streaming history data from JSON files. It calculates and displays the top artists, top tracks, and total minutes played, with options for filtering by start date and customizing the number of results displayed.
 
