@@ -13,6 +13,10 @@ def calculate_grand_total_minutes(data: List[Dict]) -> float:
     total_ms = sum(entry['ms_played'] for entry in data)
     return total_ms / 60000
 
+def calculate_total_minutes(data: List[Dict]) -> float:
+    """Calculate total minutes for 12 month period"""
+    total = sum(entry['msPlayed'] for entry in data)
+    return total / 60000
 
 def calculate_top_artists(data: List[Dict], top_n: int = 5) -> List[Tuple[str, float]]:
     """Calculate the top N artists by total listening time in minutes."""
@@ -21,6 +25,13 @@ def calculate_top_artists(data: List[Dict], top_n: int = 5) -> List[Tuple[str, f
         artist_playtime[entry['master_metadata_album_artist_name']] += entry['ms_played']
     return [(artist, ms_played / 60000) for artist, ms_played in artist_playtime.most_common(top_n)]
 
+def calculate_top_artists_12m(data: List[Dict], top_n: int = 5) -> List[Tuple[str, float]]:
+    """Calculate the top N artists by total listening time in minutes."""
+    artist_playtime = Counter()
+    for entry in data:
+        artist_playtime[entry['artistName']] += entry['msPlayed']
+    return [(artist, ms_played) for artist, ms_played in artist_playtime.most_common(top_n)]
+
 def calculate_top_tracks(data: List[Dict], top_n: int = 5) -> List[Tuple[str, float]]:
     """Calculate the top N tracks by total listening time in minutes."""
     track_playtime = Counter()
@@ -28,6 +39,14 @@ def calculate_top_tracks(data: List[Dict], top_n: int = 5) -> List[Tuple[str, fl
         track_name = f"{entry['master_metadata_album_artist_name']} - {entry['master_metadata_track_name']}"
         track_playtime[track_name] += entry['ms_played']
     return [(track, ms_played / 60000) for track, ms_played in track_playtime.most_common(top_n)]
+
+def calculate_top_tracks_12m(data: List[Dict], top_n: int = 5) -> List[Tuple[str, float]]:
+    """Calculate the top N tracks by total listening time in minutes."""
+    track_playtime = Counter()
+    for entry in data:
+        track_name = f"{entry['artistName']} - {entry['trackName']}"
+        track_playtime[track_name] += entry['msPlayed']
+    return [(track, ms_played) for track, ms_played in track_playtime.most_common(top_n)]
 
 def filter_data_by_year(data: List[Dict], year: int) -> List[Dict]:
     """Filter the data for a specific year."""

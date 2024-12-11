@@ -50,14 +50,14 @@ def main():
     print("\n=== Spotify Super Wrapped ===")
     print(f"Grand Total Minutes Listened: {total_minutes:.2f}")
     print(f"Time Span: {time_span[0]} to {time_span[1]}")
-    # print("\nTop 5 Artists:")
-    # for artist, minutes in top_artists:
-    #     print(f"{artist}: {minutes:.2f} minutes")
-    # print("\nTop 5 Tracks:")
-    # for track, minutes in top_tracks:
-    #     print(f"{track}: {minutes:.2f} minutes")
+    print("\nTop 5 Artists:")
+    for artist, minutes in top_artists:
+         print(f"{artist}: {minutes:.2f} minutes")
+    print("\nTop 5 Tracks:")
+    for track, minutes in top_tracks:
+         print(f"{track}: {minutes:.2f} minutes")
 
-    # Generate and display annual breakdown
+    # # Generate and display annual breakdown
     annual_data = calculate_annual_breakdown(data, start_year, end_year)
     display_annual_breakdown(annual_data)
 

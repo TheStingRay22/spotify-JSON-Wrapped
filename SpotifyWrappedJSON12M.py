@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from streaming_stats.parser import load_streaming_data
-from streaming_stats.analytics import calculate_top_artists, calculate_top_tracks, calculate_total_minutes
+from streaming_stats.analytics import calculate_top_artists_12m, calculate_top_tracks_12m, calculate_total_minutes
 
 def main():
     parser = argparse.ArgumentParser(description="Analyze streaming history data.")
@@ -26,14 +26,14 @@ def main():
     # Display results
     print("\n=== Top Artists ===")
     ArtistCounter = 1
-    for artist, playtime in calculate_top_artists(data, top_n=args.top_n):
+    for artist, playtime in calculate_top_artists_12m(data, top_n=args.top_n):
         
         print(f"{ArtistCounter} {artist}: {playtime / 60000:.2f} minutes")
         ArtistCounter = ArtistCounter + 1
 
     print("\n=== Top Tracks ===")
     TrackCounter = 1
-    for track, playtime in calculate_top_tracks(data, top_n=args.top_n):
+    for track, playtime in calculate_top_tracks_12m(data, top_n=args.top_n):
 
         print(f"{TrackCounter} {track}: {playtime / 60000:.2f} minutes")
         TrackCounter = TrackCounter + 1
