@@ -55,7 +55,7 @@ def calculate_top_tracks(data: List[Dict], top_n: int = 5) -> List[Tuple[str, fl
    
     track_playtime = Counter()
     for entry in data:
-        track_name = f"{entry['master_metadata_album_artist_name']} - {entry['master_metadata_track_name']}"
+        track_name = f"{entry['master_metadata_track_name']} - {entry['master_metadata_album_artist_name']}"
         track_playtime[track_name] += entry['ms_played']
     return [(track, ms_played / 60000) for track, ms_played in track_playtime.most_common(top_n)]
 
@@ -67,13 +67,20 @@ def calculate_top_tracks_12m(data: List[Dict], top_n: int = 5) -> List[Tuple[str
         track_playtime[track_name] += entry['msPlayed']
     return [(track, ms_played) for track, ms_played in track_playtime.most_common(top_n)]
 
-def calculate_total_artists_12m(data: List[Dict], top_n: int = 5):
+def calculate_total_artists_12m(data: List[Dict]):
     artist_count = set()
     for artist in data:
         artist_count.add(artist['artistName'])
     return len(artist_count)
 
-def calculate_total_artist_SUPER(data: List[Dict], top_n: int = 5):
+def calculate_total_tracks(data: List[Dict]):
+    Total_tracks = set()
+
+    for entry in data:
+        Total_tracks.add(entry['master_metadata_track_name'])
+    return len(Total_tracks)
+
+def calculate_total_artist_SUPER(data: List[Dict]):
     artist_count = set()
     for artist in data:
         artist_count.add(artist['master_metadata_album_artist_name'])
@@ -124,6 +131,7 @@ def calculate_annual_breakdown(data: List[Dict], start_year: int, end_year: int)
         if filtered_data:
             annual_data[year] = {
                 'total_minutes': calculate_grand_total_minutes(filtered_data),
+                'total_tracks': calculate_total_tracks(filtered_data),
                 'top_artists': calculate_top_artists(filtered_data),
                 'top_tracks': calculate_top_tracks(filtered_data),
                 'total_artists': calculate_total_artist_SUPER(filtered_data)
@@ -136,11 +144,12 @@ def display_annual_breakdown(annual_data: Dict[int, Dict]):
         print(f"\n================================== Year: {year} ==================================")
         print(f"Total Listening Time:     {year_data['total_minutes']:>46,.2f} minutes\n")
         print(f"Total artists listened to: {year_data['total_artists']:46,.0f}\n")
+        print(f"number of songs listened to: {year_data['total_tracks']:>46,.2f}")
         print("Top 5 Artists:")
         for artist, minutes in year_data['top_artists']:
             print(f"{artist:<50}: {minutes:>20,.2f} minutes")
 
-        print("\nTop 5 Tracks:")
+        print("\nTop 5 Songs:")
         for track, minutes in year_data['top_tracks']:
             print(f"{track:<50}: {minutes:>20,.2f} minutes")
         print("================================================================================")

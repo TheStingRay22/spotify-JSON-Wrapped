@@ -1,6 +1,6 @@
 import os
 from turtle import clear
-from streaming_stats.parser import load_streaming_data, get_start_and_end_year
+from streaming_stats.parser import filter_out_episodes, load_streaming_data, get_start_and_end_year
 from datetime import datetime
 from typing import List, Tuple
 from streaming_stats.analytics import (
@@ -8,6 +8,7 @@ from streaming_stats.analytics import (
     calculate_time_span,
     calculate_top_artists,
     calculate_top_tracks,
+    calculate_total_tracks,
     display_annual_breakdown,
     calculate_annual_breakdown,
     calculate_total_artist_SUPER
@@ -23,6 +24,7 @@ def find_json_files(directory: str) -> list:
     ]
 
 def main():
+    print(f"/n/n/n")
     art = [
     "   _____             _   _  __          _____                        __          __                             _ ",
     "  / ____|           | | (_)/ _|        / ____|                       \\ \\        / /                            | |",
@@ -43,7 +45,8 @@ def main():
         print("No files selected. Exiting.")
         return
 
-    data = load_streaming_data(file_paths)
+    pre_data = load_streaming_data(file_paths)
+    data = filter_out_episodes(pre_data)
     # print(f"Loaded {len(data)} records from {len(file_paths)} files.")
     start_year, end_year = get_start_and_end_year(data)
     total_minutes = calculate_grand_total_minutes(data)
@@ -51,19 +54,22 @@ def main():
     top_artists = calculate_top_artists(data)
     top_tracks = calculate_top_tracks(data)
     total_artist = calculate_total_artist_SUPER(data)
+    total_songs = calculate_total_tracks(data)
 
     print(f"Grand Total Minutes Listened: {total_minutes:>20,.2f}")
     print(f"Grand total artists listened to: {total_artist:>20,.0f}")
+    print(f"Grand total songs listened to: {total_songs:>20,.0f}")
     print(f"Time Span: {time_span[0]} to {time_span[1]}")
     print("\nTop 5 Artists:")
     for artist, minutes in top_artists:
          print(f"{artist:<50}: {minutes:>20,.2f} minutes")
-    print("\nTop 5 Tracks:")
+    print("\nTop 5 Songs:")
     for track, minutes in top_tracks:
          print(f"{track:<50}: {minutes:>20,.2f} minutes")
 
     # Generate and display annual breakdown
     annual_data = calculate_annual_breakdown(data, start_year, end_year)
+    
     display_annual_breakdown(annual_data)
 
 if __name__ == "__main__":
