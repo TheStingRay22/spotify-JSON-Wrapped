@@ -23,3 +23,12 @@ def get_start_and_end_year(data: List[Dict]) -> Tuple[int, int]:
     start_year = min(years)
     end_year = max(years)
     return start_year, end_year
+
+def find_json_files(directory: str) -> list:
+    """Recursively find all json files in a dir"""
+    json_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".json"):
+                json_files.append(os.path.join(root, file))
+    return json_files

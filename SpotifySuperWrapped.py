@@ -1,6 +1,5 @@
 import os
-from turtle import clear
-from streaming_stats.parser import filter_out_episodes, load_streaming_data, get_start_and_end_year
+from streaming_stats.parser import filter_out_episodes, load_streaming_data, get_start_and_end_year, find_json_files
 from datetime import datetime
 from typing import List, Tuple
 from streaming_stats.analytics import (
@@ -14,14 +13,6 @@ from streaming_stats.analytics import (
     calculate_total_artist_SUPER
 )
 DEFAULT_DIRECTORY = "/Users/dgra228/Documents/Dev/Python_Files/Spotify Extended Streaming History"
-
-def find_json_files(directory: str) -> list:
-    """Find all JSON files in the given directory."""
-    return [
-        os.path.join(directory, file)
-        for file in os.listdir(directory)
-        if file.endswith(".json")
-    ]
 
 def main():
     print(f"/n/n/n")
@@ -47,7 +38,6 @@ def main():
 
     pre_data = load_streaming_data(file_paths)
     data = filter_out_episodes(pre_data)
-    # print(f"Loaded {len(data)} records from {len(file_paths)} files.")
     start_year, end_year = get_start_and_end_year(data)
     total_minutes = calculate_grand_total_minutes(data)
     time_span = calculate_time_span(data)
