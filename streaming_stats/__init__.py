@@ -9,7 +9,7 @@ from .analytics import (
 )
 
 # Package metadata
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 __all__ = [
     "load_streaming_data",
     "calculate_top_artists",
