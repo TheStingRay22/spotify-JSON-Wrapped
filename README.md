@@ -1,84 +1,93 @@
 # Spotify JSON Wrapped
 ## SPOTIFY HAS BEEN LYING TO US
-![Pepe Silvia](https://i.kym-cdn.com/photos/images/newsfeed/002/546/187/fb1.jpg)
+![Doakes](https://i.tribune.com.pk/media/images/james-doakes1753344838-0/james-doakes1753344838-0-640x480.webp)
 
 
-**Spotify JSON Wrapped** is a Python program for analyzing streaming history data from JSON files. It calculates and displays the top artists, top tracks, and total minutes played. This is directly from Spotify data, and if you compare it to your own 'Spotify Wrapped' it will not match.
+**Spotify JSON Wrapped** is a program for analyzing streaming history data from JSON files. It calculates and displays the top artists, top tracks, and total minutes played. This is directly from Spotify data, and if you compare it to your own 'Spotify Wrapped' it will not match.
 
-***This is because Spotify is a***
+## Current Release
+[Release v1.0.0-Beta](https://github.com/TheStingRay22/spotify-JSON-Wrapped/releases/tag/v1.0.0-beta)
 
-![LIAR](https://media.tenor.com/oZrRoDQDXZ4AAAAe/anakin-liar.png)
+## New Features
 
-## Features
-- Analyze Spotify data and display it in the command line.
-- Display the top artists and tracks based on playtime.
-- Calculate total minutes played.
-- calculate total *unique* songs played
-- calculate total number of artists listened to
-- Optional filtering by a start date. (12M only) *In-P for Super*
-- Adjustable number of top artists and tracks to display (default: 5). (12M only) *IN-P for Super*
+### Core Functionality
+- Parses one or more official Spotify streaming history JSON files.  
+- Handles split exports and malformed data gracefully.  
+- Filters out podcast and episode data automatically.  
+- Outputs listening range, total minutes, total tracks, top artists, and top songs.
+
+### Analytics Module
+- Modular analytics pipeline designed for easy extension.  
+- Calculates user-level statistics (listening totals, top rankings).  
+- Provides annual breakdown support for future version upgrades.
+
+### Streamlit Web Interface
+- Lightweight, browser-based UI for uploading and viewing results.  
+- Displays key metrics and sortable tables for artists and tracks.  
+- Designed for quick local use or Streamlit Cloud deployment.
+
+### Project Structure and Tooling
+- Modular package under `streaming_stats/` for parser and analytics logic.  
+- CLI version (`SpotifySuperWrapped.py`) preserved for command-line use.  
+- Environment configuration via `.env` and `requirements.txt`.  
+- Added full unit testing with `pytest` for parser and analytics functions.
 
 ---
 
 ## Installation
 
 1. Collect your Data from Spotify [Link to Account data](https://www.spotify.com/us/account/privacy/)
-2. I reccomend selecting extended streaming history as it will work best. Alternatively [Spotify Wrapped 12M](SpotifyWrappedJSON12M.py) works very well for the basic account data.
 3. Clone this repository or download the files.
+```bash
+  git clone https://github.com/<your_username>/spotify-JSON-Wrapped.git
+  cd spotify-JSON-Wrapped
+  pip install -r requirements.txt
+  streamlit run ui_streamlit.py
+```
 4. Ensure you have Python 3.7+ installed on your system.
-5. save all of your .json files to the same directory
-6. delete any 'video'.json files
-7. grab your spotify wrapped from years past and fume
+6. save all of your .json files to the same directory
+7. delete any 'video'.json files
+8. Upload to the streamlit web interface and prepare to be confused with spotify.
 
 ---
 
 ## Usage
 
-If you have just the small data the usage is very simple.
-Enter your working directory and in the command line of your choice enter the following:
-
+**Web-Interface**
   ```bash
-  python SpotifyWrappedJSON12M.py <files> [--start-date YYYY-MM-DD] [--top-n N]
+    streamlit run ui_streamlit.py
   ```
-Parameters are explained [below](#parameters)
-
-If you opted (as you should) to get the extended data you will need to use [Super Spotify Wrapped](SuperSpotifyWrapped.py)
-The first step is to change the [default directory Global Variable](https://github.com/TheStingRay22/spotify-JSON-Wrapped/blob/2836c8b8a64816594f77e8cc374f95704a2625c5/SpotifySuperWrapped.py#L15-L16) in the script
-Then all you have to do is run the script in command line. you may have to work with your command line width to get it to display correctly.
-
+**CLI-Interface**
+change the DEFAULTDIRECTORY variable at the top of `SpotifySuperWrapped.py` to your JSON data directory
   ```bash
   python SuperSpotifyWrapped.py
   ```
-
-
-
-### Parameters: 
-- `<files>`: Paths to one or more JSON files containing streaming history
-- `--start-date` (optional): Start date for filtering records (format: YYYY-MM-DD).
-- `--top-n` (optional): Numbner of top artists and tracks to display (default 5).
-
-### Examples:
-1. Analyze a single file with no filtering:
-   ```bash
-   python SpotifyWrappedJSON12M.py StreamingHistory_music_0.json
-2. Analyze multiple files with a start date:
-   ```bash
-   python SpotifyWrappedJSON12M.py StreamingHistory_music_0.json StreamingHistory_music_1.json --start-date 2023-12-01
-3. Display top 10 artists and tracks
-   ```bash
-   python SpotifyWrappedJSON12M.py StreamingHistory_music_0.json --top-n 10
 
 ---
 
 ## Project Structure
 ```plaintext
-streaming_stats/
-    __init__.py          # Package initialization
-    parser.py            # Parses the JSON data and filers out the junk
-    analytics.py         # Does the actual meat and potatoes of the package
-SpotifyWrappedJSON12M.py # Use this is you dowwnloaded the small amount of data
-SpotifySuperWrapped.py   # This right here is my BOY
-README.md                # literally what you are in
+spotify-JSON-Wrapped
+├── streaming_stats
+│   ├── __init__.py
+│   ├── parser.py
+│   ├── analytics.py
+│   └── spotify_api.py
+│
+├── tests
+│   ├── conftest.py
+│   ├── test_parser.py
+│   └── test_analytics.py
+│
+├── SpotifySuperWrapped.py
+├── ui_streamlit.py
+│
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── pyproject.toml
+├── README.md
+└── LICENSE
 ```
 
 ---
@@ -95,4 +104,4 @@ Created by TheStingRay22
 
 ![me lmao](https://avatars.githubusercontent.com/u/122391911?v=4)
 
-Please be nice I'm just a bored IT guy with free time and whiskey
+Please be nice I'm just a bored IT guy with free time and protien
