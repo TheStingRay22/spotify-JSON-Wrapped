@@ -118,10 +118,63 @@ if st.session_state.music_data:
         st.metric("Total Minutes Listened", round(total_minutes))
     with col2:
         st.markdown("### Top Artists")
-        st.dataframe(pd.DataFrame(top_artists, columns=["Artist", "Minutes Played"]))
+        
+        artist_cols = st.columns(5) # gives us 5 artist per row
+        for i, (artist_name, minutes_played) in enumerate(top_artists[:top_n]): # top N
+            col = artist_cols[i % 5]
+            with col:
+                st.markdown(
+                    f"""
+                        <div style="
+                                background-color:#f8f9fa;
+                                border-radius:10px;
+                                padding:10px;
+                                display:flex;
+                                flex-direction:column;
+                                align-items:center;
+                                justify-content:space-between;
+                                text-align:center;
+                                box-shadow:0 1px 3px rgba(0,0,0,0.1);
+                                margin-bottom:10px;
+                                height:300px;">
+                            <img src="https://placehold.co/200x200?text=Art" 
+                                alt="Artist image"
+                                style="border-radius:50%; width:200px; height:200px; object-fit:cover;">
+                            <h3 style="margin-top:10px; color:#111111;">{artist_name}</h3>
+                            <p style="color:gray; font-size:20px;">{round(minutes_played, 1)} minutes</p>
+                        </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-    st.markdown("### Top Tracks")
-    st.dataframe(pd.DataFrame(top_tracks, columns=["Track", "Minutes Played"]))
+        st.markdown("### Top Tracks")
+        track_cols = st.columns(5)
+        for i, (track_name, minutes_played) in enumerate(top_tracks[:10]):
+            col = track_cols[i % 5]
+            with col:
+                st.markdown(
+                    f"""
+                        <div style="
+                            background-color:#f8f9fa;
+                            border-radius:10px;
+                            padding:10px;
+                            display:flex;
+                            flex-direction:column;
+                            align-items:center;
+                            justify-content:space-between;
+                            text-align:center;
+                            box-shadow:0 1px 3px rgba(0,0,0,0.1);
+                            margin-bottom:10px;
+                            height:300px;">
+                            <img src="https://placehold.co/200x200?text=Track" 
+                                alt="Track image"
+                                style="border-radius:10px; width:200px; height:200px; object-fit:cover;">
+                            <h3 style="margin-top:10px; color:#111111;">{track_name}</h3>
+                            <p style="color:gray; font-size:20px;">{round(minutes_played, 1)} minutes</p>
+                        </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
 else:
     st.info("Upload your Spotify JSON files to begin.")
