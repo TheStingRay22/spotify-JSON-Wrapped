@@ -1,3 +1,4 @@
+import datetime
 import streamlit as st
 import pandas as pd
 import json
@@ -53,16 +54,64 @@ if st.session_state.music_data:
     if not music_data:
         st.warning("No valid music data found in the uploaded files.")
         st.stop()
-
+    # === Sidebar Filters & Controls === #    
+    st.sidebar.header("Filters & Controls")
+    
+    # Extract available years
+    years = sorted(set(
+        pd.to_datetime([entry["ts"] for entry in music_data]).year
+    ))
+    min_year, max_year = min(years), max(years)
+    
+    # Year filter
+    selected_years = st.sidebar.slider(
+        "Select year range",
+        min_value=int(min_year),
+        max_value=int(max_year),
+        value=(int(min_year), int(max_year))
+    )
+    current_year = datetime.datetime.now().year
+    
+    st.sidebar.markdown("### Preset Filters")
+    col_a, col_b, col_c = st.sidebar.columns(3)
+    with col_a:
+        if st.button("All Years"):
+            selected_years = (int(min_year), int(max_year))
+    with col_b:
+        if st.button("Last Year"):
+            selected_years = (current_year - 1, current_year - 1)
+    with col_c:
+        if st.button("This Year"):
+            selected_years = (current_year, current_year)
+    # Top - N Selector
+    top_n = st.sidebar.selectbox(
+        "Select Top Number for Artists and Tracks",
+        options=[5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+        index=1
+    )
+    
+    # Minimum listening Filter
+    min_ms_played = st.sidebar.number_input(
+        "Minimum Milliseconds Played to Include",
+        min_value=0, max_value=60000, value=0, step=5000
+    )
+    # === Apply Filters ===
+    filtered_data = [
+    entry for entry in music_data
+    if selected_years[0] <= pd.to_datetime(entry["ts"]).year <= selected_years[1]
+    and entry["ms_played"] >= min_ms_played
+    ]
+    
     # Calculate and display stats
-    start_year, end_year = get_start_and_end_year(music_data)
-    total_minutes = calculate_grand_total_minutes(music_data)
-    total_tracks = calculate_total_tracks(music_data)
-    top_artists = calculate_top_artists(music_data, top_n=10)
-    top_tracks = calculate_top_tracks(music_data, top_n=10)
+    start_year, end_year = get_start_and_end_year(filtered_data)
+    total_minutes = calculate_grand_total_minutes(filtered_data)
+    total_tracks = calculate_total_tracks(filtered_data)
+    top_artists = calculate_top_artists(filtered_data, top_n=int(top_n))
+    top_tracks = calculate_top_tracks(filtered_data, top_n=int(top_n))
     
-    st.success(f"Analyzing {len(music_data)} plays from {start_year} to {end_year}")
+    st.success(f"Analyzing {len(filtered_data)} plays from {start_year} to {end_year}")
     
+    st.markdown(f"**Filters applied:** {selected_years[0]}–{selected_years[1]} | Top {top_n} | Min playtime: {min_ms_played} ms")
     col1, col2 = st.columns(2)
     with col1:
         st.metric("Total Tracks Played", total_tracks)
