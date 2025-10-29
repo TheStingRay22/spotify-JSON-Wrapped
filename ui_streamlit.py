@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import json
 import plotly.express as px
+from spotify_api import get_spotify_client, get_artist_image_and_genres, get_track_image
 from streaming_stats.parser import load_streaming_data, filter_out_episodes, get_start_and_end_year
 from streaming_stats.analytics import (
     calculate_top_artists,
@@ -37,6 +38,9 @@ def parse_uploaded_files(uploaded_files):
             st.error(f"Failed to parse {uploaded_file.name}: {e}")
     music_data = filter_out_episodes(json_data)
     return music_data
+
+# Initialize Spotify client
+sp =get_spotify_client()
 
 st.title("🎧 Spotify Super Wrapped")
 st.markdown("Upload your Spotify streaming JSON files to see your listening stats!")
@@ -170,26 +174,30 @@ if music_data:
         for i, (artist_name, minutes_played) in enumerate(top_artists[:top_n]):
             col = artist_cols[i % 5]
             with col:
+                img_url, genres = get_artist_image_and_genres(sp, artist_name) if sp else (None, [])
+                img_src = img_url or "https://placehold.co/200x200?text=Art"
                 st.markdown(
                     f"""
-                    <div style="
-                        background-color:#f0f2f6;
-                        border-radius:12px;
-                        padding:15px;
-                        text-align:center;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-                        height:320px;
-                        display:flex;
-                        flex-direction:column;
-                        justify-content:space-between;
+                        <div style="
+                            background-color:#181818;
+                            border-radius:16px;
+                            padding:15px;
+                            text-align:center;
+                            box-shadow:0 2px 10px rgba(0,0,0,0.25);
+                            transition:transform 0.2s ease-in-out;
+                            height:320px;
+                            display:flex;
+                            flex-direction:column;
+                            justify-content:space-between;
+                            color:white;
                         ">
-                        <img src="https://placehold.co/200x200?text=Art" 
-                            alt="Artist image"
-                            style="border-radius:50%; width:180px; height:180px; object-fit:cover; margin:auto;">
-                        <h4 style="margin-top:15px; color:#111111; font-weight:600;">{artist_name}</h4>
-                        <p style="color:#555555; font-size:18px; margin-bottom:0;">{round(minutes_played, 1)} minutes</p>
-                    </div>
-                    """,
+                            <img src="{img_src}" 
+                                alt="Artist image"
+                                style="border-radius:50%; width:180px; height:180px; object-fit:cover; margin:auto;">
+                            <h4 style="margin-top:15px; font-weight:600;">{artist_name}</h4>
+                            <p style="font-size:18px; margin-bottom:0;">{round(minutes_played, 1)} minutes</p>
+                        </div>
+                        """,
                     unsafe_allow_html=True,
                 )
 
@@ -199,26 +207,30 @@ if music_data:
         for i, (track_name, minutes_played) in enumerate(top_tracks[:top_n]):
             col = track_cols[i % 5]
             with col:
+                img_url = get_track_image(sp, track_name) if sp else None
+                img_src = img_url or "https://placehold.co/200x200?text=Art"
                 st.markdown(
                     f"""
-                    <div style="
-                        background-color:#f0f2f6;
-                        border-radius:12px;
-                        padding:15px;
-                        text-align:center;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-                        height:320px;
-                        display:flex;
-                        flex-direction:column;
-                        justify-content:space-between;
+                        <div style="
+                            background-color:#181818;
+                            border-radius:16px;
+                            padding:15px;
+                            text-align:center;
+                            box-shadow:0 2px 10px rgba(0,0,0,0.25);
+                            transition:transform 0.2s ease-in-out;
+                            height:320px;
+                            display:flex;
+                            flex-direction:column;
+                            justify-content:space-between;
+                            color:white;
                         ">
-                        <img src="https://placehold.co/200x200?text=Track" 
-                            alt="Track image"
-                            style="border-radius:12px; width:180px; height:180px; object-fit:cover; margin:auto;">
-                        <h4 style="margin-top:15px; color:#111111; font-weight:600;">{track_name}</h4>
-                        <p style="color:#555555; font-size:18px; margin-bottom:0;">{round(minutes_played, 1)} minutes</p>
-                    </div>
-                    """,
+                            <img src="{img_src}" 
+                                alt="Track image"
+                                style="border-radius:50%; width:180px; height:180px; object-fit:cover; margin:auto;">
+                            <h4 style="margin-top:15px; font-weight:600;">{track_name}</h4>
+                            <p style="font-size:18px; margin-bottom:0;">{round(minutes_played, 1)} minutes</p>
+                        </div>
+                        """,
                     unsafe_allow_html=True,
                 )
 
